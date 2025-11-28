@@ -98,3 +98,81 @@ for ex in examples:
     area = call(ex, "area")
     className = ex["_class"]["_className"]
     print(f"{name} is in {className} class, has perimeter {perimeter:.2f}, and area {area:.2f}")
+
+# 2.3 Arguments
+def show_args(title, *args, **kwargs):
+    print(f"{title} args '{args}' and kwargs '{kwargs}'")
+
+show_args("nothing")
+show_args("one unnamed argument", 1)
+show_args("one named argument", second="2")
+show_args("one of each", 3, fourth="4")
+
+def show_spread(left, middle, right):
+    print(f"left {left} middle {middle} right {right}")
+
+all_in_lst = [1,2,3]
+show_spread(*all_in_lst)
+all_in_dict = {"right": 30, "left": 10, "middle": 20}
+show_spread(**all_in_dict)
+
+def square_larger(thing, size):
+    return call(thing, "area") > size
+
+Square = {
+    "permieter": square_perimeter,
+    "area": square_area,
+    "larger": square_larger,
+    "_classname": "Square"
+}
+
+examples = [square_new("sq", 3)]
+
+def call(thing, method_name, *args):
+    return thing["_class"][method_name](thing, *args)
+
+for ex in examples:
+    result = call(ex, "larger", 10)
+    print(f"is {ex['name']} larger than 10? {result}")
+
+# Section 2.4: Inheritance
+class Shape:
+    def __init__(self, name):
+        self.name = name
+
+    def perimeter(self):
+        raise NotImplementedError("perimeter")
+
+    def area(self):
+        raise NotImplementedError("area")
+
+    def density(self, weight):
+        return weight / self.area()
+
+class Square(Shape):
+    def __init__(self, name, size):
+        super().__init__(name)
+        self.size = size
+
+    def perimeter(self):
+        return 4 * self.size
+
+    def area(self):
+        return self.size ** 2
+
+class Circle(Shape):
+    def __init__(self, name, radius):
+        super().__init__(name)
+        self.radius = radius
+
+    def perimeter(self):
+        return math.pi * 2 * self.radius
+
+    def area(self):
+        return math.pi * (self.radius ** 2)
+
+examples = [Square("sq", 3), Circle("ci", 2)]
+for ex in examples:
+    n = ex.name
+    d = ex.density(5)
+    print(f"{n}: {d:.2f}")
